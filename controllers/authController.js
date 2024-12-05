@@ -41,7 +41,7 @@ exports.authMiniApp = (req, res) => {
         team: team || null,
         photo_url: photo_url || null,
         points: 0,
-        referral_code: `https://t.me/testtest23bot/testing?startapp=${telegram_id}`,
+        referral_code: `https://t.me/santaquest_bot/santaquest?startapp=${telegram_id}`,
         referral_id: JSON.stringify([]),
         referrer_id: referrer_id || null,
       };
