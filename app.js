@@ -17,7 +17,7 @@ const apiRoutes = require('./routes/apiRoutes');
 
 const app = express();
 app.use(cors({
-    origin: '*', 
+    origin: 'https://new-app-santa-quest.netlify.app', 
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -37,7 +37,7 @@ app.use('/api',apiRoutes)
 
 let bot = new Telegraf(process.env.BOT_TOKEN)
 
-bot.start((ctx) => ctx.reply('Привет! Бот работает.'));
+// bot.start((ctx) => ctx.reply('Привет! Бот работает.'));
 
 
 
