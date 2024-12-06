@@ -119,14 +119,15 @@ router.post('/process-payment', async (req, res) => {
     if(status === "paid"){
    
     // Получаем текущую дату и время для полей created_at и updated_at
-    const currentDate = new Date().toISOString();
+    const currentDate = new Date();
+const formattedDate = currentDate.toISOString().slice(0, 19).replace('T', ' ');
 
     // Записываем данные в таблицу payments с использованием db.query
     const query = `
       INSERT INTO payments (telegram_id , type , keys_purchased, price, created_at)
       VALUES (?, ?, ? , ?, ?)
     `;
-    db.query(query, [telegram_id, type , keys, price, currentDate], (err, result) => {
+    db.query(query, [telegram_id, type , keys, price, formattedDate], (err, result) => {
       if (err) {
         console.error('Ошибка при записи в таблицу payments:', err);
         return res.status(500).json({ error: 'Ошибка при записи данных' });
