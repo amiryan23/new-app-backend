@@ -5,6 +5,7 @@ const { handleReferral } = require('../utils/referralUtils');
 exports.authMiniApp = (req, res) => {
   const { telegram_id, username, first_name, last_name, team, photo_url, referrer_id, initData } = req.body;
 
+
   const isValid = validateTelegramData(initData, process.env.BOT_TOKEN);
   if (!isValid) {
     return res.status(403).send('Unauthorized');
@@ -42,7 +43,7 @@ exports.authMiniApp = (req, res) => {
         photo_url: photo_url || null,
         points: 0,
         referral_code: `https://t.me/santaquest_bot/santaquest?startapp=${telegram_id}`,
-        referral_id: JSON.stringify([]),
+        referral_id: '[]',
         referrer_id: referrer_id || null,
       };
 

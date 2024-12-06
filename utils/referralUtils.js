@@ -43,4 +43,6 @@ function handleReferral(referrer_id, telegram_id, res, userData) {
   });
 }
 
-module.exports = handleReferral;
+module.exports = {
+  handleReferral,
+};
