@@ -38,7 +38,6 @@ app.use('/api',apiRoutes)
 let bot = new Telegraf(process.env.BOT_TOKEN)
 
 bot.start((ctx) => {
-  // Отправляем фото и описание игры
   ctx.replyWithPhoto({ url: 'https://i.ibb.co/SBgmpWB/2.png' }, {
     caption: 'Welcome to our game! Here you can find exciting adventures and quests. Ready to play?',
     reply_markup: {
@@ -50,28 +49,27 @@ bot.start((ctx) => {
   });
 });
 
-
-
 bot.on('pre_checkout_query', (ctx) => {
-    ctx.answerPreCheckoutQuery(true)
-})
+  ctx.answerPreCheckoutQuery(true);
+});
 
 bot.on('message', (ctx) => {
-    if (ctx.update.message.successful_payment != undefined) {
-        ctx.reply('Thanks for the purchase!')
-    } else {
-        // Handle other message types, subtypes
-    }
-})
-
-bot.launch()
-  .then(() => console.log('Бот запущен!'))
-  .catch((error) => console.error('Ошибка при запуске бота:', error));
+  if (ctx.update.message.successful_payment !== undefined) {
+    ctx.reply('Thanks for the purchase!');
+  } else {
+    // Handle other message types, subtypes
+  }
+});
 
 
+const PORT = process.env.PORT;
+const WEBHOOK_URL = process.env.WEBHOOK_URL ;
 
-const PORT = process.env.PORT ;
-app.listen(PORT,'0.0.0.0', () => {
+bot.telegram.setWebhook(`${WEBHOOK_URL}/bot${process.env.BOT_TOKEN}`);
+app.use(bot.webhookCallback(`/bot${process.env.BOT_TOKEN}`));
+
+
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is running on port ${PORT}`);
-
+  console.log(`Webhook set to: ${WEBHOOK_URL}/bot${process.env.BOT_TOKEN}`);
 });
