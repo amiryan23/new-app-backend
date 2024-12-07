@@ -45,6 +45,7 @@ exports.authMiniApp = (req, res) => {
         referral_code: `https://t.me/santaquest_bot/santaquest?startapp=${telegram_id}`,
         referral_id: '[]',
         referrer_id: referrer_id || null,
+        keysForCode:3
       };
 
       db.query(

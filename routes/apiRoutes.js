@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../db');
 const axios = require('axios')
+const { claimChest } = require('../controllers/claimChest');
 
 const router = express.Router();
 
@@ -297,5 +298,8 @@ router.post('/spin', (req, res) => {
     });
   });
 });
+
+
+router.post('/claim-chest', claimChest);
 
 module.exports = router
