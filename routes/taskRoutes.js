@@ -66,6 +66,62 @@ router.post('/claim', (req, res) => {
   });
 });
 
+router.post('/claimKey', (req, res) => {
+  const { taskId, telegram_id } = req.body;
+
+  // Получаем задачу по ID
+  db.query('SELECT is_completed, reward FROM tasks WHERE id = ?', [taskId], (err, results) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
+    const isCompleted = JSON.parse(results[0].is_completed || '[]'); // Парсим массив выполненных пользователей
+    const keysReward = results[0].reward || 0; // Вознаграждение ключами за выполнение задачи
+
+    // Проверяем, добавлен ли telegram_id в массив
+    if (isCompleted.includes(telegram_id)) {
+      return res.status(400).json({ success: false, message: 'Task already claimed by this user.' });
+    }
+
+    // Добавляем telegram_id в массив
+    isCompleted.push(telegram_id);
+
+    // Обновляем массив is_completed в базе данных
+    db.query(
+      'UPDATE tasks SET is_completed = ? WHERE id = ?',
+      [JSON.stringify(isCompleted), taskId],
+      (updateErr) => {
+        if (updateErr) {
+          console.error('Error updating task:', updateErr);
+          return res.status(500).json({ error: 'Failed to update task data' });
+        }
+
+        // Добавляем ключи пользователю
+        db.query(
+          'UPDATE users SET keysForCode = keysForCode + ? WHERE telegram_id = ?',
+          [keysReward, telegram_id],
+          (err) => {
+            if (err) {
+              console.error('Error updating keys:', err);
+              return res.status(500).json({ error: 'Failed to update keys' });
+            }
+
+            return res.json({
+              success: true,
+              message: `Task claimed successfully! +${keysReward} keys added.`,
+            });
+          }
+        );
+      }
+    );
+  });
+});
+
 router.post('/claim-with-points', (req, res) => {
   const { taskId, telegram_id } = req.body;
 

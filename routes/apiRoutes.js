@@ -15,22 +15,33 @@ router.post('/getReferralUsers', (req, res) => {
     }
 
     if (results.length > 0) {
-      const referralIds = JSON.parse(results[0].referral_id); // Парсим строку JSON в массив
+      let referralIds;
+      try {
+        referralIds = JSON.parse(results[0].referral_id); // Парсим строку JSON в массив
+      } catch (parseErr) {
+        console.error('Error parsing referral_id:', parseErr);
+        return res.status(500).json({ error: 'Invalid referral_id format' });
+      }
 
-      // Ищем пользователей, чьи telegram_id находятся в referral_id
-      db.query('SELECT first_name,last_name FROM users WHERE telegram_id IN (?)', [referralIds], (err, referralUsers) => {
-        if (err) {
-          console.error('Error fetching referral users:', err);
-          return res.status(500).json({ error: 'Database error' });
-        }
+      if (Array.isArray(referralIds) && referralIds.length > 0) {
+        // Ищем пользователей, чьи telegram_id находятся в referral_id
+        db.query('SELECT first_name, last_name FROM users WHERE telegram_id IN (?)', [referralIds], (err, referralUsers) => {
+          if (err) {
+            console.error('Error fetching referral users:', err);
+            return res.status(500).json({ error: 'Database error' });
+          }
 
-        res.json(referralUsers); // Отправляем найденных пользователей
-      });
+          res.json(referralUsers); // Отправляем найденных пользователей
+        });
+      } else {
+        res.json([]); // Если список referralIds пуст, возвращаем пустой массив
+      }
     } else {
       res.status(404).json({ error: 'User not found' });
     }
   });
 });
+
 
 
 router.post("/update-wallet", (req, res) => {
