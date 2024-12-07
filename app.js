@@ -37,7 +37,18 @@ app.use('/api',apiRoutes)
 
 let bot = new Telegraf(process.env.BOT_TOKEN)
 
-// bot.start((ctx) => ctx.reply('Привет! Бот работает.'));
+bot.start((ctx) => {
+  // Отправляем фото и описание игры
+  ctx.replyWithPhoto({ url: 'https://i.ibb.co/SBgmpWB/2.png' }, {
+    caption: 'Welcome to our game! Here you can find exciting adventures and quests. Ready to play?',
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: 'Start', url: 'https://t.me/santaquest_bot/santaquest' }],
+        [{ text: 'Join Community', url: 'https://t.me/santaquest' }]
+      ]
+    }
+  });
+});
 
 
 
