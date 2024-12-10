@@ -4,7 +4,7 @@ const db = require('../db');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  db.query('SELECT id, level, is_completed, reward, is_closed, is_ended FROM levels', (err, results) => {
+  db.query('SELECT id, level, imgUrl , is_completed, reward, is_closed, is_ended FROM levels', (err, results) => {
     if (err) {
       console.error('Database error:', err);
       return res.status(500).json({ error: 'Database error' });
