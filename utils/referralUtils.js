@@ -1,7 +1,7 @@
 const db = require('../db');
 
 function handleReferral(referrer_id, telegram_id, res, userData) {
-  db.query('SELECT referral_id, points FROM users WHERE telegram_id = ?', [referrer_id], (err, results) => {
+  db.query('SELECT referral_id, points , keysForCode FROM users WHERE telegram_id = ?', [referrer_id], (err, results) => {
     if (err) {
       console.error('Error fetching referrer:', err);
       return res.status(500).json({ error: 'Database error while fetching referrer' });
@@ -20,7 +20,7 @@ function handleReferral(referrer_id, telegram_id, res, userData) {
 
       // Обновляем массив referral_id и добавляем 250 points пригласившему пользователю
       db.query(
-        'UPDATE users SET referral_id = ?, points = points + 250 WHERE telegram_id = ?',
+        'UPDATE users SET referral_id = ?, points = points + 250 , keysForCode = keysForCode + 1 WHERE telegram_id = ?',
         [JSON.stringify(referralArray), referrer_id],
         (updateErr) => {
           if (updateErr) {
