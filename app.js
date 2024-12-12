@@ -5,6 +5,7 @@ const db = require('./db'); // Подключение к базе данных
 const crypto = require('crypto');
 const bodyParser = require('body-parser');
 const axios = require('axios')
+const cron = require('node-cron');
 const { Telegraf } = require("telegraf");
 const authRoutes = require('./routes/authRoutes');
 const usersRoutes = require('./routes/usersRoutes');
@@ -13,6 +14,7 @@ const levelRoutes = require('./routes/levelRoutes');
 const shopRoutes = require('./routes/shopRoutes');
 const wheelRoutes = require('./routes/wheelRoutes');
 const apiRoutes = require('./routes/apiRoutes');
+const blockRoutes = require('./routes/blockRoutes');
 
 
 const app = express();
@@ -29,8 +31,10 @@ app.use('/users', usersRoutes);
 app.use('/tasks', taskRoutes);
 app.use('/levels', levelRoutes);
 app.use('/shop', shopRoutes);
+app.use('/blocks', blockRoutes);
 app.use('/wheel_prizes', wheelRoutes);
 app.use('/api',apiRoutes)
+
 
 
 
@@ -66,6 +70,49 @@ bot.on('message', (ctx) => {
 bot.launch()
   .then(() => console.log('Бот запущен!'))
   .catch((error) => console.error('Ошибка при запуске бота:', error));
+
+
+cron.schedule('0 * * * *', () => {
+    const now = new Date();
+    console.log('Task is running every hour');
+    db.query('SELECT id, owner, reward, last_reward_time FROM blocks WHERE owner IS NOT NULL', (err, blocks) => {
+        if (err) {
+            return console.error('Error fetching blocks:', err);
+        }
+
+        blocks.forEach((block) => {
+            const { id, owner, reward, last_reward_time } = block;
+// 
+//             const elapsedHours = Math.floor((now - new Date(last_reward_time)) / (1000 * 60 * 60));
+//             if (elapsedHours > 0) {
+                const newPoints = reward;
+
+                
+                db.query(
+                    'UPDATE users SET points = points + ? WHERE telegram_id = ?',
+                    [newPoints, owner],
+                    (err) => {
+                        if (err) {
+                            return console.error(`Error updating points for user ${owner}:`, err);
+                        }
+
+                       
+                        db.query(
+                            'UPDATE blocks SET last_reward_time = ? WHERE id = ?',
+                            [now, id],
+                            (err) => {
+                                if (err) {
+                                    return console.error(`Error updating block ${id}:`, err);
+                                }
+                                console.log(`Rewards updated for block ${id} and user ${owner}`);
+                            }
+                        );
+                    }
+                );
+            // }
+        });
+    });
+});
 
 
 
