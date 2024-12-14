@@ -15,11 +15,12 @@ const shopRoutes = require('./routes/shopRoutes');
 const wheelRoutes = require('./routes/wheelRoutes');
 const apiRoutes = require('./routes/apiRoutes');
 const blockRoutes = require('./routes/blockRoutes');
+const giftRoutes = require('./routes/giftRoutes');
 
 
 const app = express();
 app.use(cors({
-    origin: 'https://new-app-santa-quest.netlify.app', 
+    origin: 'https://new-app-backend-production.up.railway.app', 
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -34,6 +35,7 @@ app.use('/shop', shopRoutes);
 app.use('/blocks', blockRoutes);
 app.use('/wheel_prizes', wheelRoutes);
 app.use('/api',apiRoutes)
+app.use('/gifts',giftRoutes)
 
 
 
@@ -113,6 +115,8 @@ cron.schedule('0 * * * *', () => {
         });
     });
 });
+
+
 
 
 
