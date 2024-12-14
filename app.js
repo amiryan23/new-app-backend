@@ -20,7 +20,7 @@ const giftRoutes = require('./routes/giftRoutes');
 
 const app = express();
 app.use(cors({
-    origin: 'https://new-app-backend-production.up.railway.app', 
+    origin: 'https://new-app-santa-quest.netlify.app', 
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -36,6 +36,7 @@ app.use('/blocks', blockRoutes);
 app.use('/wheel_prizes', wheelRoutes);
 app.use('/api',apiRoutes)
 app.use('/gifts',giftRoutes)
+
 
 
 
