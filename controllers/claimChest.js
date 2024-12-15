@@ -24,7 +24,7 @@ exports.claimChest = (req, res) => {
       const user = results[0];
       const currentTime = new Date();
       const lastClaimTime = user.last_claim_time ? new Date(user.last_claim_time) : null; // Проверяем, пустое ли значение
-      const eightHours = 8 * 60 * 60 * 1000;
+      const eightHours = 1 * 60 * 60 * 1000;
 
       // Если last_claim_time пустое или прошло 8 часов, разрешаем награду
       if (!lastClaimTime || currentTime - lastClaimTime >= eightHours) {
